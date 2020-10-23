@@ -6,6 +6,22 @@ find_package(SofaBase REQUIRED) # SofaGeneralLinearSolver
 find_package(SofaCommon REQUIRED) # SofaImplicitOdeSolver SofaSimpleFem
 find_package(SofaGeneral REQUIRED) # SofaGeneralLinearSolver
 
+#########################
+#       CUDA setup      #
+#########################
+
+find_package(CUDA REQUIRED)
+
+if(CUDA_FOUND)
+    set(CUDA_NVCC_FLAGS "-arch;sm_61")
+else(CUDA_FOUND)
+    message("CUDA is not installed on this system.")
+endif()
+
+#########################
+#       CUDA setup      #
+#########################
+
 add_subdirectory(extlibs/csparse)
 sofa_set_01(SOFASPARSESOLVER_HAVE_CSPARSE VALUE TRUE)
 
@@ -37,9 +53,19 @@ set(SOURCE_FILES
     ${SRC_ROOT}/SparseLUSolver.cpp
     )
 
-add_library(${PROJECT_NAME} SHARED ${HEADER_FILES} ${SOURCE_FILES})
-target_link_libraries(${PROJECT_NAME} PUBLIC SofaBaseLinearSolver SofaGeneralLinearSolver SofaImplicitOdeSolver SofaSimpleFem)
-target_link_libraries(${PROJECT_NAME} PUBLIC metis csparse)
+#########################
+#       CUDA setup      #
+#########################
+
+cuda_add_library(${PROJECT_NAME} SHARED ${HEADER_FILES} ${SOURCE_FILES} ${SRC_ROOT}/CudaMatrix.h ${SRC_ROOT}/CudaMatrix.cu)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBRARIES})
+
+#########################
+#       CUDA setup      #
+#########################
+
+target_link_libraries(${PROJECT_NAME} SofaBaseLinearSolver SofaGeneralLinearSolver SofaImplicitOdeSolver SofaSimpleFem)
+target_link_libraries(${PROJECT_NAME} metis csparse)
 
 sofa_generate_package(
     NAME SofaSparseSolver
