@@ -94,6 +94,17 @@ void SparseLDLSolver<TMatrix,TVector,TThreadManager>::invert(Matrix& M) {
     numStep++;
 }
 
+
+void printMatrix(unsigned N, unsigned M, double* array) {
+    for (int i = 0; i < N * M; i++) {
+        std::cout << "\t" << array[i];
+
+        if (!((i + 1) % M))
+            std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+
 /// Default implementation of Multiply the inverse of the system matrix by the transpose of the given matrix, and multiply the result with the given matrix J
 template<class TMatrix, class TVector, class TThreadManager>
 bool SparseLDLSolver<TMatrix, TVector, TThreadManager>::addJMInvJtLocal(TMatrix* M, ResMatrixType* result, const JMatrixType* J, double fact) {
@@ -135,42 +146,43 @@ bool SparseLDLSolver<TMatrix, TVector, TThreadManager>::addJMInvJtLocal(TMatrix*
     }
 
     clock_t begin_time = clock();
-    std::cout << begin_time << " , Solve constraints - BuildSystem - addComplianceInConstraintSpace - buildComplianceMatrix - addJMInvJtLocal - multiply the result with the given matrix J" << std::endl;
+    std::cout << begin_time << " , SparseLDLSolver - addJMInvJtLocal - multiply the result with the given matrix J, " << std::endl;
 
-    /*
-    for (unsigned j=0; j<(unsigned)J->rowSize(); j++) {
-        Real * lineJ = Jminv[j];
-        for (unsigned i=j;i<(unsigned)J->rowSize();i++) {
-            Real * lineI = Jdense[i];
+    const unsigned n = (unsigned)J->rowSize();
+    const unsigned m = (unsigned)J->colSize();
+    const unsigned r = (unsigned)J->rowSize();
 
-            double acc = 0.0;
-            for (unsigned k=0;k<(unsigned)J->colSize();k++) {
-                acc += lineJ[k] * lineI[k];
-            }
-            result->add(j,i,acc*fact);
-            if(i!=j) result->add(i,j,acc*fact);
-        }
-    }
-    */
-
-    const unsigned n = (unsigned) J->rowSize();
-    const unsigned m = (unsigned) J->colSize();
-    const unsigned r = (unsigned) J->rowSize();
-
-    double* m1 = Jdense[0];
-    double* m2 = Jminv[0];
     double* response = new double[n * r];
+    double* Jminv_T  = new double[m * r];
     
-    MultiplyMattix(m1, m2, response, m, n, r);
+    clock_t begin_time0 = clock();
+    std::cout << begin_time0 << " , Transpose, " << std::endl;
+
+    Transpose(Jminv[0] , Jminv_T , n, m);
+
+    std::cout << clock() << " , Transpose, " << double(clock() - begin_time0) / CLOCKS_PER_SEC << " seconds " << std::endl;
+
+    clock_t begin_time1 = clock();
+    std::cout << begin_time1 << " , MultiplyCUBLAS, " << std::endl;
+
+    MultiplyCUBLAS(Jdense[0], Jminv_T, response, m, n, r);
+
+    std::cout << clock() << " , MultiplyCUBLAS, " << double(clock() - begin_time1) / CLOCKS_PER_SEC << " seconds " << std::endl;
+
+    clock_t begin_time2 = clock();
+    std::cout << begin_time2 << " , Copy result, " << std::endl;
 
     for (unsigned j = 0; j < n ; j++) {
         for (unsigned i = 0; i < n ; i++)
             result->add(j, i, response[j * n + i] * fact);
     }
 
-    delete[]  response;
+    std::cout << clock() << " , Copy result, " << double(clock() - begin_time2) / CLOCKS_PER_SEC << " seconds " << std::endl;
 
-    std::cout << clock() << " , Solve constraints - BuildSystem - addComplianceInConstraintSpace - buildComplianceMatrix - addJMInvJtLocal - multiply the result with the given matrix J, " << double(clock() - begin_time) / CLOCKS_PER_SEC << std::endl;
+    delete[] response;
+    delete[] Jminv_T;
+    
+    std::cout << clock() << " , SparseLDLSolver - addJMInvJtLocal - multiply the result with the given matrix J , " << " Matrix "<< n << "x" << m << " time: " << double(clock() - begin_time) / CLOCKS_PER_SEC << " seconds "<<std::endl;
 
     return true;
 }

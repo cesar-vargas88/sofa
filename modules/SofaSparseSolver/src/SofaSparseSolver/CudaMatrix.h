@@ -30,7 +30,9 @@ namespace component
 
 namespace linearsolver
 {
-    void MultiplyMattix(double* m1, double* m2, double* result, unsigned m, unsigned n, unsigned r);
+    void Transpose(double* src, double* dst, unsigned n, unsigned m);
+    void MultiplyThrust(double* m1, double* m2, double* result, unsigned m, unsigned n, unsigned r);
+    void MultiplyCUBLAS(double* m1, double* m2, double* result, unsigned m, unsigned n, unsigned r);
 
 } // namespace linearsolver
 

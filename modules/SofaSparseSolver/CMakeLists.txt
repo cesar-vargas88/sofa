@@ -11,6 +11,7 @@ find_package(SofaGeneral REQUIRED) # SofaGeneralLinearSolver
 #########################
 
 find_package(CUDA REQUIRED)
+find_package(CUDASparse REQUIRED)
 
 if(CUDA_FOUND)
     set(CUDA_NVCC_FLAGS "-arch;sm_61")
@@ -59,6 +60,8 @@ set(SOURCE_FILES
 
 cuda_add_library(${PROJECT_NAME} SHARED ${HEADER_FILES} ${SOURCE_FILES} ${SRC_ROOT}/CudaMatrix.h ${SRC_ROOT}/CudaMatrix.cu)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBRARIES})
+cuda_add_cublas_to_target(${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} ${CUDA_SPARSE_LIBRARY})
 
 #########################
 #       CUDA setup      #
