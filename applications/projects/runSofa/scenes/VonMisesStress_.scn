@@ -1,0 +1,218 @@
+<?xml version="1.0" ?>
+<Node name="root" dt="0.05" showBoundingTree="0" gravity="0 0 0">
+
+    <VisualStyle displayFlags="showVisualModels showBehaviorModels showForceFields showBoundingCollisionModels" />
+  
+    <RequiredPlugin name="SofaOpenglVisual"/>
+    <RequiredPlugin name='SofaSparseSolver'/>
+
+    <FreeMotionAnimationLoop />
+    <GenericConstraintSolver unbuilt="false" tolerance="1e-3" maxIt="200"   printLog="0"/>
+
+    <DefaultPipeline verbose="0" depth="10" draw="0" />
+    <BruteForceDetection name="N2" />
+    <MinProximityIntersection name="Proximity" alarmDistance="0.2" contactDistance="0.1" />
+    <DefaultContactManager name="Response" response="FrictionContact" />
+
+    <RecordedCamera name="cam" position="0 50 0" rotationLookAt="0 5 0" rotationStartPoint="0 30 80" rotationCenter="0 0 0" listening="true" startTime="20" endTime="100" drawRotation="0" rotationMode="1" />
+<!--
+    <Node name="liver">
+
+        <EulerImplicitSolver printLog="false"  />
+        <SparseLDLSolver  template="CompressedRowSparseMatrix3d" printLog="false" />
+        
+        <MeshGmshLoader name="loader" filename="mesh/liver.msh" />
+        <TetrahedronSetTopologyContainer src="@loader" />
+
+        <MechanicalObject scale3d="0.25 0.25 0.25" translation="0 10 0" rotation="0 0 0" template="Vec3d"/>
+        <TetrahedronSetGeometryAlgorithms template="Vec3d" />
+        <UniformMass totalMass="5" />
+
+        <TetrahedronFEMForceField 
+            template="Vec3d" 
+            youngModulus="10000" 
+            poissonRatio="0.495" 
+            method="large"  
+            computeVonMisesStress="1"  
+            updateStiffness="true" 
+            showVonMisesStressPerNode="false" 
+            showStressColorMap  =   "green  0   0.5 0   1  0.5  1   0   1" />
+
+        <GenericConstraintCorrection printLog="0" />
+
+        <Node name="surface">
+             <MeshObjLoader name="loader" filename="mesh/liver.obj" />
+             <MeshTopology src="@loader" />
+             <MechanicalObject src="@loader" scale3d="0.25 0.25 0.25" translation="0 10 0" rotation="0 0 0" template="Vec3d"/>
+             <TriangleCollisionModel  />
+             <LineCollisionModel  />
+             <PointCollisionModel />
+             <BarycentricMapping input="@.." output="@." />
+        </Node>
+
+    </Node>
+-->
+    <Node name="left_tp">
+
+        <EulerImplicitSolver printLog="false"  />
+        <SparseLDLSolver  template="CompressedRowSparseMatrix3d" printLog="false" />
+        
+        <MeshGmshLoader name="loader" filename="mesh/left_tp_100.msh" />
+        <TetrahedronSetTopologyContainer src="@loader" />
+
+        <MechanicalObject scale3d="10 10 10" translation="0 3 0" rotation="0 0 0" template="Vec3d"/>
+        <TetrahedronSetGeometryAlgorithms template="Vec3d" />
+        <UniformMass totalMass="20" />
+
+        <TetrahedronFEMForceField 
+            template="Vec3d" 
+            youngModulus="1000" 
+            poissonRatio="0.495" 
+            method="large"  
+            computeVonMisesStress="1"  
+            updateStiffness="true" 
+            showVonMisesStressPerNode="false" 
+            showStressColorMap  =   "green  0   0.5 0   1  0.5  1   0   1" />
+
+        <GenericConstraintCorrection printLog="0" />
+
+        <Node name="surface">
+             <MeshObjLoader name="loader" filename="mesh/left_tp_100.obj" />
+             <MeshTopology src="@loader" />
+             <MechanicalObject src="@loader" scale3d="10 10 10" translation="0 3 0" rotation="0 0 0" template="Vec3d"/>
+             <TriangleCollisionModel  />
+             <LineCollisionModel  />
+             <PointCollisionModel />
+             <BarycentricMapping input="@.." output="@." />
+        </Node>
+
+        <OglModel src="@loader" scale3d="10 10 10" translation="0 3 0" rotation="0 0 0"/>
+
+    </Node>
+<!--
+    <Node name="right_tp">
+
+        <EulerImplicitSolver printLog="false"  />
+        <SparseLDLSolver  template="CompressedRowSparseMatrix3d" printLog="false" />
+        
+        <MeshGmshLoader name="loader" filename="mesh/right_tp_100.msh" />
+        <TetrahedronSetTopologyContainer src="@loader" />
+
+        <MechanicalObject scale3d="10 10 10" translation="0 5 0" rotation="0 0 0" template="Vec3d"/>
+        <TetrahedronSetGeometryAlgorithms template="Vec3d" />
+        <UniformMass totalMass="2" />
+
+        <TetrahedronFEMForceField 
+            template="Vec3d" 
+            youngModulus="10000" 
+            poissonRatio="0.100" 
+            method="large"  
+            computeVonMisesStress="1"  
+            updateStiffness="true" 
+            showVonMisesStressPerNode="false" 
+            showStressColorMap  =   "green  0   0.5 0   1  0.5  1   0   1" />
+
+        <GenericConstraintCorrection printLog="0" />
+
+        <Node name="surface">
+             <MeshObjLoader name="loader" filename="mesh/right_tp_100.obj" />
+             <MeshTopology src="@loader" />
+             <MechanicalObject src="@loader" scale3d="10 10 10" translation="0 5 0" rotation="0 0 0" template="Vec3d"/>
+             <TriangleCollisionModel  />
+             <LineCollisionModel  />
+             <PointCollisionModel />
+             <BarycentricMapping input="@.." output="@." />
+        </Node>
+
+    </Node>
+
+    <Node name="mattress">
+
+        <EulerImplicitSolver printLog="false"  />
+        <SparseLDLSolver template="CompressedRowSparseMatrix3d" printLog="false" />
+       
+        <RegularGridTopology nx="3" ny="3" nz="3" xmin="-1" xmax="1" ymin="2" ymax="2.2" zmin="-2" zmax="2" />
+        <MechanicalObject name="MS" scale3d="1 1 1" translation="0 0 0" rotation="0 0 0" template="Vec3d"/>
+        <UniformMass totalMass="10" />
+        
+        <TetrahedronFEMForceField 
+            template="Vec3d" 
+            youngModulus="4000" 
+            poissonRatio="0.495" 
+            method="large"  
+            computeVonMisesStress="1"  
+            updateStiffness="true" 
+            showVonMisesStressPerNode="false" 
+            showStressColorMap  =   "green  0   0.5 0   1  0.5  1   0   1" />
+
+        <GenericConstraintCorrection printLog="0" />
+
+        <Node name="surface">
+            
+            <RegularGridTopology nx="3" ny="3" nz="3" xmin="-1" xmax="1" ymin="2" ymax="2.2" zmin="-2" zmax="2" />
+            <MechanicalObject name="MS" scale3d="1 1 1" translation="0 0 0" rotation="0 0 0"/>
+
+            <TriangleCollisionModel />
+            <LineCollisionModel />
+            <PointCollisionModel />
+
+            <SubsetMapping input="@../MS" output="@MS" />
+            
+        </Node>
+        
+    </Node>
+-->
+    <Node name="bed">
+        <!--
+        <EulerImplicitSolver printLog="false"  />
+        <SparseLDLSolver template="CompressedRowSparseMatrix3d" printLog="false" />
+       
+        <RegularGridTopology nx="3" ny="3" nz="3" xmin="-1" xmax="1" ymin="0" ymax="1" zmin="-2" zmax="2" />
+        <MechanicalObject name="MS" scale3d="1 1 1" translation="0 0.2 0" rotation="0 0 0" template="Vec3d"/>
+        <UniformMass totalMass="50" />
+        
+        <TetrahedronFEMForceField 
+            template="Vec3d" 
+            youngModulus="4000" 
+            poissonRatio="0.495" 
+            method="large"  
+            computeVonMisesStress="1"  
+            updateStiffness="true" 
+            showVonMisesStressPerNode="false" 
+            showStressColorMap  =   "green  0   0.5 0   1  0.5  1   0   1" />
+
+        <GenericConstraintCorrection printLog="0" />
+
+        <Node name="surface">
+            -->
+            <RegularGridTopology nx="3" ny="3" nz="3" xmin="-1" xmax="1" ymin="0" ymax="1" zmin="-2" zmax="2" />
+            <MechanicalObject name="MS" scale3d="1 1 1" translation="0 0.2 0" rotation="0 0 0"/>
+
+            <TriangleCollisionModel />
+            <LineCollisionModel />
+            <PointCollisionModel />
+
+            <SubsetMapping input="@../MS" output="@MS" />
+            
+        <!--</Node>-->
+
+
+
+
+    </Node>
+
+    <Node name="floor">
+
+        <MeshObjLoader name="loader" filename="mesh/floor.obj" handleSeams="1"/>
+        <MeshTopology src="@loader" />
+        <MechanicalObject src="@loader" scale3d="0.25 0.25 0.25"/>
+
+        <TriangleCollisionModel />
+        <LineCollisionModel />  
+        <PointCollisionModel /> 
+
+        <OglModel src="@loader" scaleTex="0.09 0.09" texturename="textures/floor2.bmp" scale3d="0.25 0.25 0.25"/>
+
+    </Node>
+
+</Node>

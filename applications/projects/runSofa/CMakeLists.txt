@@ -21,6 +21,9 @@ install(FILES "${_defaultConfigPluginFilePath}" DESTINATION ${_pluginLocation}/ 
 ###################################
 
 find_package(SofaValidation QUIET)
+find_package(SofaOpenglVisual)
+find_package(SofaSparseSolver)
+#find_package(SofaCUDA)
 
 set(HEADER_FILES
     runSofaValidation.h
@@ -58,6 +61,9 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC "DEFAULT_CONFIG_PLUGIN_FILENAM
 target_link_libraries(${PROJECT_NAME} SofaMisc)
 target_link_libraries(${PROJECT_NAME} SofaSimulationGraph)
 target_link_libraries(${PROJECT_NAME} SofaGuiMain)
+target_link_libraries(${PROJECT_NAME} SofaOpenglVisual)
+target_link_libraries(${PROJECT_NAME} SofaSparseSolver)
+#target_link_libraries(${PROJECT_NAME} SofaCUDA)
 
 if(SofaValidation_FOUND)
     target_link_libraries(${PROJECT_NAME} SofaValidation)

@@ -114,7 +114,7 @@ void DDGNode::addOutput(DDGNode* n)
 {
     if(std::find(outputs.begin(), outputs.end(), n) != outputs.end())
     {
-        assert(false && "trying to add a DDGNode that is already in the output set.");
+        //assert(false && "trying to add a DDGNode that is already in the output set.");
         return;
     }
 

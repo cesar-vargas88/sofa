@@ -1,0 +1,156 @@
+<?xml version="1.0" ?>
+<Node name="root" dt="0.05" showBoundingTree="0" gravity="0.0 0.0 0.2">
+    
+    <RequiredPlugin pluginName='SofaOpenglVisual'/> 
+    <RequiredPlugin pluginName='SofaSparseSolver'/> 
+    <RequiredPlugin pluginName='SofaValidation'/> 
+
+    <VisualStyle displayFlags="showVisualModels showBehaviorModels showForceFields showCollisionModels showBoundingCollisionModels" />
+    <FreeMotionAnimationLoop printLog="false"/>
+    <LCPConstraintSolver tolerance="1e-3" maxIt="1" initial_guess="false" build_lcp="false"  printLog="0" mu="0.2"/>
+
+    <DefaultPipeline verbose="0" depth="1" draw="0" printLog="false"/>
+    <BruteForceDetection printLog="false" />
+    <MinProximityIntersection alarmDistance="0.1" contactDistance="0.005" printLog="false"/>
+    <DefaultContactManager response="FrictionContact" printLog="false"/>
+
+    <Node name="tp">
+
+        <EulerImplicitSolver rayleighMass="1" rayleighStiffness="0.0001" />
+        <CGLinearSolver iterations="100" tolerance="1e-12" threshold="1e-18" />
+       
+        <MeshGmshLoader name="loader" filename="mesh/left_tp_100.msh" />        
+        <TetrahedronSetTopologyContainer src="@loader" />
+
+        <MechanicalObject name="MS" scale3d="1 1 1" translation="0.0 0.0 -0.25" rotation="0 0 0"/>
+        <TetrahedronSetGeometryAlgorithms src="@loader" />
+ 
+        <UniformMass totalMass="0.25" />
+
+        <TetrahedronFEMForceField 
+            youngModulus="10000" 
+            poissonRatio="0.495" 
+            method="large"   
+            computeVonMisesStress="1"
+            updateStiffness="true" 
+            showVonMisesStressPerNode="false" 
+            showStressColorMap  =   "green  0   0.5 0   1  0.5  1   0   1" />
+        
+        <UncoupledConstraintCorrection useOdeSolverIntegrationFactors="0"/>
+        
+        <FixedConstraint  name="FixedConstraint" indices = ""/>
+        
+        <Node name="surface">
+
+            <MeshObjLoader name="loader" filename="mesh/left_tp_100.obj" />
+            <MeshTopology src="@loader" />
+            <MechanicalObject scale3d="1 1 1" translation="0.0 0.0 -0.25" rotation="0 0 0" />
+
+            <TriangleCollisionModel />
+            <LineCollisionModel />
+            <PointCollisionModel />
+
+            <BarycentricMapping />
+            
+        </Node>
+ 
+    </Node>
+
+    <Node name="box">
+
+        <EulerImplicitSolver rayleighMass="1" rayleighStiffness="0.0001" />
+        <CGLinearSolver iterations="100" tolerance="1e-12" threshold="1e-18" />
+       
+        <MeshGmshLoader name="loader" filename="mesh/Box_small_red.msh" />        
+        <TetrahedronSetTopologyContainer src="@loader" />
+
+        <MechanicalObject name="MS" scale3d="1 1 1" translation="0.0 0.0 -0.08" rotation="0 0 0"/>
+        <TetrahedronSetGeometryAlgorithms src="@loader" />
+ 
+        <UniformMass totalMass="2.0" />
+
+        <TetrahedronFEMForceField 
+            youngModulus="500" 
+            poissonRatio="0.495" 
+            method="large"   
+            computeVonMisesStress="1"
+            updateStiffness="true" 
+            showVonMisesStressPerNode="false" 
+            showStressColorMap  =   "green  0   0.5 0   1  0.5  1   0   1" />
+        
+        <UncoupledConstraintCorrection useOdeSolverIntegrationFactors="0"/>
+        
+        <FixedConstraint  name="FixedConstraint" indices = ""/>
+        
+        <Node name="surface">
+
+            <MeshObjLoader name="loader" filename="mesh/Box_small_red.obj" />
+            <MeshTopology src="@loader" />
+            <MechanicalObject scale3d="1 1 1" translation="0.0 0.0 -0.08" rotation="0 0 0" />
+
+            <TriangleCollisionModel />
+            <LineCollisionModel />
+            <PointCollisionModel />
+
+            <BarycentricMapping />
+            
+        </Node>
+ 
+    </Node>
+    <!--
+    <Node name="cylinder">
+
+        <EulerImplicitSolver rayleighMass="1" rayleighStiffness="0.0001" />
+        <CGLinearSolver iterations="10" tolerance="1e-12" threshold="1e-18" />
+       
+        <MeshGmshLoader name="loader" filename="mesh/Cylinder_small.msh" />        
+        <TetrahedronSetTopologyContainer src="@loader" />
+
+        <MechanicalObject name="MS" scale3d="1 1 1" translation="0.0 0.0 -0.2" rotation="0 0 0"/>
+        <TetrahedronSetGeometryAlgorithms src="@loader" />
+ 
+        <UniformMass totalMass="0.005" />
+
+        <TetrahedronFEMForceField 
+            youngModulus="4000" 
+            poissonRatio="0.495" 
+            method="large"   
+            computeVonMisesStress="1"
+            updateStiffness="true" 
+            showVonMisesStressPerNode="false" 
+            showStressColorMap  =   "green  0   0.5 0   1  0.5  1   0   1" />
+        
+        <UncoupledConstraintCorrection useOdeSolverIntegrationFactors="0"/>
+        
+        <FixedConstraint  name="FixedConstraint" indices = ""/>
+        
+        <Node name="surface">
+
+            <MeshObjLoader name="loader" filename="mesh/Cylinder_small.obj" />
+            <MeshTopology src="@loader" />
+            <MechanicalObject scale3d="1 1 1" translation="0.0 0.0 -0.2" rotation="0 0 0" />
+
+            <TriangleCollisionModel />
+            <LineCollisionModel />
+            <PointCollisionModel />
+
+            <BarycentricMapping />
+            
+        </Node>
+ 
+    </Node>
+    -->
+    <Node name="floor">
+
+        <RegularGridTopology nx="2" ny="2" nz="2" xmin="-0.5" xmax="0.5" ymin="-0.5" ymax="0.5" zmin="0.0" zmax="0.05" />
+        <MechanicalObject scale3d="1 1 1" translation="0 0 0" rotation="0 0 0" />
+        
+        <OglModel/>
+
+        <TriangleCollisionModel />
+        <LineCollisionModel />
+        <PointCollisionModel />
+
+    </Node>
+
+</Node> 

@@ -74,7 +74,7 @@ public:
     };
     typedef typename Line::iterator LElementIterator;
     typedef typename Line::const_iterator LElementConstIterator;
-
+    
 protected:
     Real* data;
     Index nRow,nCol;

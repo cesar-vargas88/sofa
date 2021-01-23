@@ -1,0 +1,134 @@
+<?xml version="1.0" ?>
+<Node name="root" dt="0.05" showBoundingTree="0" gravity="0 -9.8 0">
+    
+    <RequiredPlugin pluginName='SofaOpenglVisual'/> 
+    <RequiredPlugin pluginName='SofaSparseSolver'/> 
+    <RequiredPlugin pluginName='SofaValidation'/> 
+
+    <VisualStyle displayFlags="showVisualModels showBehaviorModels showForceFields showBoundingCollisionModels" />
+    <FreeMotionAnimationLoop />
+    <GenericConstraintSolver unbuilt="false" tolerance="1e-3" maxIt="200" printLog="0"/>
+    <DefaultPipeline verbose="0" depth="6" draw="0" />
+    <BruteForceDetection name="N2" />
+    <MinProximityIntersection name="Proximity" alarmDistance="1.2" contactDistance="0.1" />
+    <DefaultContactManager name="Response" response="FrictionContact" />
+
+    <Node name="mesh_tp">
+
+        <MeshGmshLoader name="loader" filename="mesh/tp.msh" />
+        <TetrahedronSetTopologyContainer src="@loader" />
+        <MechanicalObject name="MS" scale3d="10 10 10" translation="-5 5 0" rotation="0 90 -90"/>
+
+    </Node>
+
+    <Node name="tp">
+
+        <EulerImplicitSolver printLog="false"  />
+        <SparseLDLSolver template="CompressedRowSparseMatrix3d" printLog="false" />
+
+        <MeshGmshLoader name="loader" filename="mesh/tp.msh" />
+        <TetrahedronSetTopologyContainer src="@loader" />
+
+        <MechanicalObject name="MS" scale3d="10 10 10" translation="-5 5 0" rotation="0 90 -90" template="Vec3d"/>
+        <TetrahedronSetGeometryAlgorithms template="Vec3d" />
+        <UniformMass totalMass="20" />
+
+        <TetrahedronFEMForceField 
+            template="Vec3d" 
+            youngModulus="5000" 
+            poissonRatio="0.495" 
+            method="large" />
+
+        <GenericConstraintCorrection printLog="0" />
+        <FixedConstraint  name="FixedConstraint" indices="0 10 20" />
+
+        <Node name="surface">
+
+            <MeshObjLoader name="loader" filename="mesh/tp.obj" />
+            <MeshTopology src="@loader" />
+            <MechanicalObject name="MS" scale3d="10 10 10" translation="-5 5 0" rotation="0 90 -90" template="Vec3d"/>
+
+            <BarycentricMapping input="@../MS" output="@MS"/>
+
+            <TriangleCollisionModel />
+            <LineCollisionModel/>
+            <PointCollisionModel/>
+            
+        </Node>   
+
+        <EvalPointsDistance name="dist" object1="@/mesh_tp/MS" object2="@MS" listening="true" period="0.05" draw="true" />
+
+        <Node name="data">
+            <DataDisplay name="Data" pointData="@../dist.distance" />
+            <OglColorMap colorScheme="Blue to Red" />
+            <IdentityMapping input="@../MS" output="@Data"/>
+        </Node>  
+
+    </Node>
+
+    <Node name="mesh_piper">
+
+        <MeshGmshLoader name="loader" filename="mesh/liver.msh" />
+        <TetrahedronSetTopologyContainer src="@loader" />
+        <MechanicalObject name="MS" scale3d="1 1 1" translation="5 1 0" rotation="0 0 0"/>
+
+    </Node>
+
+    <Node name="piper">
+
+        <EulerImplicitSolver printLog="false"  />
+        <SparseLDLSolver template="CompressedRowSparseMatrix3d" printLog="false" />
+
+        <MeshGmshLoader name="loader" filename="mesh/liver.msh" />
+        <TetrahedronSetTopologyContainer src="@loader" />
+
+        <MechanicalObject name="MS" scale3d="1 1 1" translation="5 1 0" rotation="0 0 0" template="Vec3d"/>
+        <TetrahedronSetGeometryAlgorithms template="Vec3d" />
+        <UniformMass totalMass="100" />
+
+        <TetrahedronFEMForceField 
+            template="Vec3d" 
+            youngModulus="4000" 
+            poissonRatio="0.495" 
+            method="large" />
+
+        <GenericConstraintCorrection printLog="0" />
+        <FixedConstraint  name="FixedConstraint" indices="3 39 64" />
+
+        <Node name="surface">
+
+            <MeshObjLoader name="loader" filename="mesh/liver.obj" />
+            <MeshTopology src="@loader" />
+            <MechanicalObject name="MS" scale3d="1 1 1" translation="5 1 0" rotation="0 0 0" template="Vec3d"/>
+
+            <BarycentricMapping input="@../MS" output="@MS"/>
+
+            <TriangleCollisionModel />
+            <LineCollisionModel/>
+            <PointCollisionModel/>
+            
+        </Node>   
+
+        <EvalPointsDistance name="dist" object1="@/mesh_piper/MS" object2="@MS" listening="true" period="0.05" draw="true" />
+
+        <Node name="data">
+            <DataDisplay name="Data" pointData="@../dist.distance" />
+            <OglColorMap colorScheme="Blue to Red" />
+            <IdentityMapping input="@../MS" output="@Data"/>
+        </Node>  
+
+    </Node>
+
+    <Node name="floor">
+
+        <RegularGridTopology nx="2" ny="2" nz="2" xmin="-10" xmax="10" ymin="-0.5" ymax="0" zmin="-10" zmax="10" />
+        <MechanicalObject scale3d="1 1 1" translation="0 0 0" rotation="0 0 0" template="Vec3d"/>
+        <OglModel texturename="textures/floor2.bmp" />
+
+        <TriangleCollisionModel />
+        <LineCollisionModel />
+        <PointCollisionModel />
+
+    </Node>
+
+</Node> 

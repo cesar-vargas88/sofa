@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+<Node name="root" dt="0.05" showBoundingTree="0" gravity="0 -9.8 0">
+    
+    <RequiredPlugin pluginName='SofaOpenglVisual'/> 
+    <RequiredPlugin pluginName='SofaSparseSolver'/> 
+    <RequiredPlugin pluginName='SofaValidation'/> 
+
+    <!--<VisualStyle displayFlags="showVisualModels showBehaviorModels showForceFields showBoundingCollisionModels" />-->
+    <FreeMotionAnimationLoop />
+    <GenericConstraintSolver unbuilt="false" tolerance="1e-3" maxIt="200" printLog="0"/>
+    <DefaultPipeline verbose="0" depth="6" draw="0" />
+    <BruteForceDetection name="N2" />
+    <MinProximityIntersection name="Proximity" alarmDistance="1.2" contactDistance="0.1" />
+    <DefaultContactManager name="Response" response="FrictionContact" />
+
+    <LightManager name="lightManager1"  listening="1" />
+    <SpotLight name="light1"  color="1 1 1"  position="0 80 25"  direction="0 -1 -0.8"  cutoff="30"  exponent="1" />
+	<SpotLight name="light2"  color="1 1 1"  position="0 40 100"  direction="0 0 -1"  cutoff="30"  exponent="1" />
+    
+    <Node name="tp0">
+
+        <EulerImplicitSolver printLog="false"  />
+        <SparseLDLSolver template="CompressedRowSparseMatrix3d" printLog="false" />
+
+        <MeshGmshLoader name="loader" filename="mesh/left_tp_100.msh" />
+        <TetrahedronSetTopologyContainer src="@loader" />
+
+        <MechanicalObject name="MS" scale3d="10 10 10" translation="-6 0.9 -4" rotation="0 90 -90" template="Vec3d"/>
+        <TetrahedronSetGeometryAlgorithms template="Vec3d" />
+        <UniformMass totalMass="10" />
+
+        <TetrahedronFEMForceField 
+            template="Vec3d" 
+            youngModulus="500000" 
+            poissonRatio="0.4" 
+            method="large" />
+
+        <GenericConstraintCorrection printLog="0" />
+  
+        <Node name="surface">
+
+            <MeshObjLoader name="loader" filename="mesh/left_tp_100.obj" />
+            <MeshTopology src="@loader" />
+            <MechanicalObject name="MS" scale3d="10 10 10" translation="-6 3 -4" rotation="0 90 -90" template="Vec3d"/>
+
+            <BarycentricMapping input="@../MS" output="@MS"/>
+
+            <TriangleCollisionModel />
+            <LineCollisionModel/>
+            <PointCollisionModel/>
+            
+        </Node>   
+
+        <Node name="Soft gelatin">
+            <MeshObjLoader name="meshLoader_2" filename="mesh/left_tp_100.obj" handleSeams="1" />
+            <OglModel name="VisualBody" src="@meshLoader_2" normals="0" color="1 0 0 0.4" />
+            <IdentityMapping input="@.." output="@VisualBody" />
+        </Node>
+
+    </Node>
+
+    <Node name="floor">
+
+        <RegularGridTopology nx="2" ny="2" nz="2" xmin="-10" xmax="10" ymin="-0.5" ymax="0" zmin="-10" zmax="10" />
+        <MechanicalObject scale3d="1 1 1" translation="0 0 0" rotation="0 0 0" template="Vec3d"/>
+        <OglModel texturename="textures/floor2.bmp" scaleTex="0.01 0.01"/>
+ 
+        <TriangleCollisionModel />
+        <LineCollisionModel />
+        <PointCollisionModel />
+    
+    </Node>
+
+</Node> 
